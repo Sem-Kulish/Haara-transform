@@ -55,13 +55,47 @@ def TransformMatrix(coefArray, matrix):
 
     return matrix
 
-a = np.zeros((4, 3))
-b = np.zeros((4, 4))
+image = cv2.imread('../images/2.png')
 
-print(a.shape[0])
-print(calcParamMatrixCoefs(a))
-print(TransformMatrix(a, b))
+if image.shape[0]!=image.shape[1]:
+    print("Error! Wrong image!")
+    exit(1)
+cv2.imshow("Image", image)
 
-c = b.copy()
-c = np.transpose(c)
-print(c)
+#grayColor(image)
+
+
+
+coefs = np.zeros((image.shape[0], 3))
+H = np.zeros((image.shape[0], image.shape[0]))
+
+calcParamMatrixCoefs(coefs)
+H = TransformMatrix(coefs, H)
+
+print(H)
+
+HT = H.copy()
+HT = np.transpose(HT)
+
+F = np.zeros((image.shape[0], image.shape[1]))
+
+for i in range(image.shape[0]):
+    for j in range(image.shape[1]):
+        F[i, j] = image[i, j][0]
+
+
+
+T = H*F*HT
+print(T)
+
+procimage = image.copy()
+
+for i in range(image.shape[0]):
+    for j in range(image.shape[1]):
+        procimage[i, j] = [T[i, j], T[i, j], T[i, j]]
+
+cv2.imshow("Processed image", procimage)
+#print(HT)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
