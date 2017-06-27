@@ -44,63 +44,79 @@ def IWT(data, w0, w1, s0, s1):
 
 
 def FWTA(data, w0, w1, s0, s1, iterations):
-    rows = data.shape[0]
-    cols = data.shape[1]
+    length = data.shape[0]
+    num = data.shape[1]
 
-    row = np.zeros(cols)
-    col = np.zeros(rows)
+   # row = np.zeros(cols)
+    #col = np.zeros(rows)
 
-    for k in range(iterations):
-        for i in range(rows):
-            for j in range(row.shape[0]):
-                row[j] = data[i, j]
+    for i in range(iterations):
 
-            FWT(row, w0, w1, s0, s1)
+        num1 = 1 << (i & 31)
+        num2 = num/num1
+        num3 = length/num1
+        numArray = np.zeros(int(num2))
 
-            for j in range(row.shape[0]):
-                data[i, j] = row[j]
+        for j in range(int(num3)):
+            for k in range(numArray.shape[0]):
+                numArray[k] = data[j, k]
 
-        for j in range(cols):
-            for i in range(col.shape[0]):
-                col[i] = data[i, j]
+            FWT(numArray, w0, w1, s0, s1)
 
-            FWT(col, w0, w1, s0, s1)
+            for k in range(numArray.shape[0]):
+                data[j, k] = numArray[k]
 
-            for i in range(col.shape[0]):
-                data[i, j] = col[i]
+        numArray1 = np.zeros(int(num3))
+        for k in range(int(num2)):
+            for j in range(numArray1.shape[0]):
+                numArray1[j] = data[j, k]
+
+            FWT(numArray1, w0, w1, s0, s1)
+
+            for j in range(numArray1.shape[0]):
+                data[j, k] = numArray1[j]
 
 def IWTA(data, w0, w1, s0, s1, iterations):
-    rows = data.shape[0]
-    cols = data.shape[1]
+    length = data.shape[0]
+    num = data.shape[1]
 
-    row = np.zeros(rows)
-    col = np.zeros(cols)
+    #row = np.zeros(rows)
+    #col = np.zeros(cols)
 
-    for k in range(iterations):
-        for j in range(rows):
-            for i in range(row.shape[0]):
-                col[i] = data[i, j]
+    for i in range(iterations-1, 0-1, -1):
 
-            IWT(col, w0, w1, s0, s1)
+        num1 = 1 << (i & 31)
+        num2 = num/num1
+        num3 = length/num1
+        numArray = np.zeros(int(num3))
 
-            for i in range(row.shape[0]):
-                data[i, j] = col[i]
+        for j in range(int(num2)):
+            for k in range(numArray.shape[0]):
+                numArray[k] = data[k, j]
 
-        for i in range(cols):
-            for j in range(col.shape[0]):
-                row[j] = data[i, j]
+            IWT(numArray, w0, w1, s0, s1)
 
-            IWT(row, w0, w1, s0, s1)
+            for k in range(numArray.shape[0]):
+                data[k, j] = numArray[k]
 
-            for j in range(col.shape[0]):
-                data[i, j] = row[j]
+        numArray1 = np.zeros(int(num2))
+        for k in range(int(num3)):
+            for j in range(numArray1.shape[0]):
+                numArray1[j] = data[k, j]
+
+            IWT(numArray1, w0, w1, s0, s1)
+
+            for j in range(numArray1.shape[0]):
+                data[k, j] = numArray1[j]
 
 
 image = cv2.imread('../images/lena.png')
 
 cv2.imshow('Original image', image)
 
-koef = 1
+
+koef = 8
+
 
 w0 = 0.5
 w1 = -0.5
@@ -159,4 +175,6 @@ for i in range(resImage.shape[0]):
 cv2.imshow("Restored image", resImage)
 
 cv2.waitKey(0)
+
 cv2.destroyAllWindows()
+
