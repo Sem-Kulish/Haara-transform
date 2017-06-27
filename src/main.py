@@ -114,7 +114,9 @@ image = cv2.imread('../images/lena.png')
 
 cv2.imshow('Original image', image)
 
+
 koef = 8
+
 
 w0 = 0.5
 w1 = -0.5
@@ -173,4 +175,6 @@ for i in range(resImage.shape[0]):
 cv2.imshow("Restored image", resImage)
 
 cv2.waitKey(0)
+
 cv2.destroyAllWindows()
+
